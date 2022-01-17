@@ -144,7 +144,7 @@ int izlaz(Position current)
 
 	izlaz(current->sibling);
 	izlaz(current->child);
-	izlaz(current->sibling);
+	free(current->sibling);
 
 	return EXIT_SUCCESS;
 }
