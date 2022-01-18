@@ -26,11 +26,13 @@ ListPosition CreateListElement(char* country);
 ListPosition InsertSortedInList(ListPosition head, char* country);
 int InsertAfter(ListPosition previous, char* country);
 int ReadFile(char* fileName, ListPosition head);
-int ReadFileForTree(char* fileName, BinPosition root);
+BinPosition ReadFileForTree(char* fileName, BinPosition root);
 BinPosition CreateTreeElement(char* cityName, int population);
 BinPosition InsertToTree(BinPosition newElement, BinPosition current);
 int PrintList(ListPosition head);
 int PrintTree(BinPosition current);
+int FindCountry(ListPosition head, char* country, int population);
+BinPosition FindCity(BinPosition current, int population);
 
 #endif // !ZAD_10A
 

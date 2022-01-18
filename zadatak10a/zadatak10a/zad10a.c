@@ -71,7 +71,7 @@ int ReadFile(char* fileName, ListPosition head)
 		if (sscanf(buffer, " %s %s", country, cityFile) == 2)
 		{
 			newElement = InsertSortedInList(head, country);
-
+			
 			newElement->root = ReadFileForTree(cityFile, newElement->root);
 		}
 	}
@@ -80,33 +80,34 @@ int ReadFile(char* fileName, ListPosition head)
 	return EXIT_SUCCESS;
 }
 
-int ReadFileForTree(char* fileName, BinPosition root)
+BinPosition ReadFileForTree(char* fileName, BinPosition root)
 {
 	char buffer[MAX_LINE] = { 0 };
 	FILE* cityFile = NULL;
+	int population = 0;
+	char cityName[MAX_SIZE] = { 0 };
+	BinPosition newElement = NULL;
 	
 	cityFile = fopen(fileName, "r");
 	if (!cityFile)
 	{
-		perror("Unable to open the file.\n");
-		return -1;
+		perror("Unable to open the city file.\n");
+		return NULL;
 	}
 
 	while (!feof(cityFile))
 	{
-		int population = 0;
-		char cityName[MAX_SIZE] = { 0 };
-		
-		BinPosition newElement = NULL;
-
 		fgets(buffer, MAX_LINE, cityFile);
-		if (sscanf(buffer, " %s %d", cityName, population) == 2)
+		
+		if (sscanf(buffer, " %s %d", cityName, &population) == 2)
 		{
 			newElement = CreateTreeElement(cityName, population);
 			root = InsertToTree(newElement, root);
 		}
 	}
 
+	fclose(cityFile);
+	return root;
 }
 
 BinPosition CreateTreeElement(char* cityName, int population)
@@ -132,13 +133,13 @@ BinPosition InsertToTree(BinPosition newElement, BinPosition current)
 {
 	if (current == NULL)
 	{
-		return current;
+		return newElement;
 	}
 	else if (current->population < newElement->population)
 	{
 		current->right = InsertToTree(newElement, current->right);
 	}
-	else if (current->population < newElement->population)
+	else if (current->population > newElement->population)
 	{
 		current->left = InsertToTree(newElement, current->left);
 	}
@@ -148,7 +149,7 @@ BinPosition InsertToTree(BinPosition newElement, BinPosition current)
 		{
 			current->right = InsertToTree(newElement, current->right);
 		}
-		else if (strcmp(current->cityName, newElement->cityName) < 0)
+		else if (strcmp(current->cityName, newElement->cityName) > 0)
 		{
 			current->left = InsertToTree(newElement, current->left);
 		}
@@ -163,8 +164,8 @@ int PrintList(ListPosition head)
 
 	while (temp)
 	{
-		printf("Country: %s\nGradovi: ", temp->countryName);
-		if (temp->root)
+		printf("Country: %s\nCities:\n", temp->countryName);
+		if (temp->root != NULL)
 		{
 			PrintTree(temp->root);
 		}
@@ -181,7 +182,7 @@ int PrintList(ListPosition head)
 
 int PrintTree(BinPosition current)
 {
-	if (current = NULL)
+	if (current == NULL)
 	{
 		return EXIT_SUCCESS;
 	}
@@ -191,4 +192,50 @@ int PrintTree(BinPosition current)
 	PrintTree(current->right);
 
 	return EXIT_SUCCESS;
+}
+
+int FindCountry(ListPosition head, char* country, int population)
+{
+	ListPosition temp = head->next;
+
+	while (temp != NULL && strcmp(country, temp->countryName) != 0)
+	{
+		temp = temp->next;
+	}
+
+	if (temp != NULL)
+	{
+		printf("Cities with population bigger than %d:\n", population);
+		if (temp->root == NULL)
+		{
+			printf("There are no cities.\n");
+		}
+		else
+		{
+			temp->root = FindCity(temp->root, population);
+		}
+		
+	}
+
+	return EXIT_SUCCESS;
+}
+
+BinPosition FindCity(BinPosition current, int population)
+{
+	if (current == NULL)
+	{
+		return NULL;
+	}
+	else if (current->population >= population)
+	{
+		current->left = FindCity(current->left, population);
+		printf("City name: %s\tPopulation: %d\n", current->cityName, current->population);
+		current->right = FindCity(current->right, population);
+	}
+	else if (current->population < population)
+	{
+		current->right = FindCity(current->right, population);
+	}
+
+	return current;
 }
