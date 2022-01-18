@@ -164,11 +164,12 @@ int Menu(Position root)
 		"4) Preorder printing.\n"
 		"5) Postorder printing.\n"
 		"6) Find a number.\n"
-		"7) Exit.\n");
+		"7) Exit.\n"
+		"8) Levelorder printing.\n");
 
 		scanf("%d", &action);
 
-		if (action < 1 || action > 7)
+		if (action < 1 || action > 8)
 		{
 			printf("Wrong number. Try again!\n");
 		}
@@ -206,9 +207,66 @@ int Menu(Position root)
 				printf("Number %d is on adress %d.\n", temp->number, temp);
 			}
 		}
+		else if (action == 8)
+		{
+			PrintLevelOrder(root);
+		}
 		else
 			return EXIT_SUCCESS;
 	} while (action != 7);
 
 	return EXIT_SUCCESS;
+}
+
+int Levelorder(Position root, int level)
+{
+	if (!root)
+	{
+		return -1;
+	}
+	else if (level == 0)
+	{
+		printf("%d ", root->number);
+	}
+	else if (level > 0)
+	{
+		Levelorder(root->left, level - 1);
+		Levelorder(root->right, level - 1);
+	}
+
+	return EXIT_SUCCESS;
+}
+
+int PrintLevelOrder(Position root)
+{
+	int level = 0;
+
+	for (level = 0; level <= Depth(root); level++)
+	{
+		Levelorder(root, level);
+	}
+
+	return EXIT_SUCCESS;
+}
+
+int Depth(Position root)
+{
+	int lDepth = 0, rDepth = 0;
+
+	if (!root)
+	{
+		return -1;
+	}
+
+	lDepth = Depth(root->left);
+	rDepth = Depth(root->right);
+
+	if (lDepth > rDepth)
+	{
+		return lDepth + 1;
+	}
+	else
+	{
+		return rDepth + 1;
+	}
 }

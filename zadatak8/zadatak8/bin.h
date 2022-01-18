@@ -19,5 +19,8 @@ int Inorder(Position root);
 Position InsertElement(int number, Position root);
 Position CreateElement(int number);
 int Menu(Position root);
+int Levelorder(Position root, int level);
+int PrintLevelOrder(Position root);
+int Depth(Position root);
 
 #endif // !BIN_H
